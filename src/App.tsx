@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { v4 as uuidV4 } from "uuid";
 import ApiService, { API_NOTES, API_TAGS } from "./api/MockApi";
@@ -169,6 +169,11 @@ function App() {
     //   return prevTags.filter((tag) => tag.id !== id);
     // });
   }
+
+  useEffect(() => {
+    fetchAllNotes();
+    fetchAllTags();
+  }, []);
 
   return (
     <div className="container">
