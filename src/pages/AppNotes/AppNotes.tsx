@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 import ReactSelect from "react-select";
 
 import { Skeleton } from "../../components/skeleton";
-import { Tag } from "../../type";
+import { Tag, TagCreate } from "../../type";
 import { FilterText } from "../../until/LightTextToFilter";
 import { motion } from "framer-motion";
 import styles from "./appNotes.module.scss";
-import { EditTagsModal } from "./editTagsModal";
+import { EditTagsModal } from "./editTags.module";
 
 type SimplifiedNote = {
   tags: Tag[];
@@ -20,19 +20,11 @@ type SimplifiedNote = {
 type NoteListProps = {
   availableTags: Tag[];
   notes: SimplifiedNote[];
-  onDeleteTag: (id: string) => void;
-  onUpdateTag: (id: string, label: string) => void;
   isPending: boolean;
 };
 
-export function AppNotes({
-  availableTags,
-  notes,
-  onUpdateTag,
-  onDeleteTag,
-  isPending,
-}: NoteListProps) {
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+export function AppNotes({ availableTags, notes, isPending }: NoteListProps) {
+  const [selectedTags, setSelectedTags] = useState<TagCreate[]>([]);
   const [title, setTitle] = useState("");
   const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
 
@@ -42,9 +34,7 @@ export function AppNotes({
         (title === "" ||
           note.title.toLowerCase().includes(title.toLowerCase())) &&
         (selectedTags.length === 0 ||
-          // filtering by tags, if 2 or more tags satisfy the condition all tags must match
           selectedTags.every((tag) =>
-            // функция some проходит по каждому элементу и сравнивает по всем тегам что есть
             note.tags.some((noteTag) => noteTag.id === tag.id)
           ))
       );
@@ -55,16 +45,7 @@ export function AppNotes({
   ));
   const NotesMap = filteredNotes
     .map((note) => (
-      <motion.div
-        key={note.id}
-        // initial={{
-        //   y: -200,
-        //   opacity: 0,
-        // }}
-        // transition={{ duration: 1.2 }}
-        // whileInView={{ opacity: 1, y: 0 }}
-        // viewport={{ once: true }}
-      >
+      <motion.div key={note.id}>
         <Link to={`/${note.id}`} className={styles.noteCard}>
           <NoteCard title={note.title} tags={note.tags} titleFilter={title} />
         </Link>
@@ -110,7 +91,6 @@ export function AppNotes({
               })}
               onChange={(tags) => {
                 setSelectedTags(
-                  // @ts-ignore
                   tags.map((tag) => {
                     return { label: tag.label, id: tag.value };
                   })
@@ -125,11 +105,8 @@ export function AppNotes({
           {!isPending ? NotesMap : skeletons}
         </motion.div>
         <EditTagsModal
-          onUpdateTag={onUpdateTag}
-          onDeleteTag={onDeleteTag}
           show={editTagsModalIsOpen}
           handleClose={() => setEditTagsModalIsOpen(false)}
-          availableTags={availableTags}
         />
       </div>
     </>
@@ -137,14 +114,15 @@ export function AppNotes({
 }
 
 function NoteCard({ title, tags, titleFilter }: SimplifiedNote) {
+  // fucntion for light text
   const light = useCallback(
-    (titleCard: any) => {
+    (titleCard: string) => {
       return <FilterText titleCard={titleCard} titleFilter={titleFilter} />;
     },
     [titleFilter]
   );
   return (
-    <div className={` ${styles.noteCard__link}`}>
+    <div className={`${styles.noteCard__link}`}>
       <div>
         <div>
           <span>{light(title)}</span>

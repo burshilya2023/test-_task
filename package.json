@@ -9,18 +9,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
-   
+    "@reduxjs/toolkit": "^1.9.1",
+    "@types/lodash": "^4.14.188",
     "@types/styled-components": "^5.1.26",
     "axios": "^1.2.0",
     "framer-motion": "^7.6.17",
-    "@types/lodash": "^4.14.188",
     "lodash": "^4.17.21",
     "markdown": "^0.5.0",
     "react": "^18.2.0",
     "react-content-loader": "^6.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.7.1",
     "react-markdown": "^8.0.4",
     "react-query": "^3.39.2",
+    "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.4",
     "react-select": "^5.7.0",
     "sass": "^1.56.1",

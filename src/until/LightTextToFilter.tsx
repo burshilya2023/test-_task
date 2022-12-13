@@ -24,6 +24,11 @@ export const FilterText = (props: any) => {
     titleCard;
   }
 };
+
+type TextLight = {
+  tagsTask: string;
+  editText: string;
+};
 export const TextAreaLight = (props: any) => {
   const { tagsTask, editText } = props;
 

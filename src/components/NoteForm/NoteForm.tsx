@@ -1,52 +1,39 @@
-import {
-  FormEvent,
-  useEffect,
-  useCallback,
-  useRef,
-  useState,
-  ChangeEvent,
-} from "react";
-import { debounce } from "lodash";
+import { FormEvent, useCallback, useRef, useState, ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CreatableReactSelect from "react-select/creatable";
-
 import { v4 as uuidV4 } from "uuid";
 import { NoteData, Tag } from "../../type";
-
 import styles from "./noteForm.module.scss";
 import { TextAreaLight } from "../../until/LightTextToFilter";
+import { notesAPI } from "../../api/notesService";
+
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void;
-  onAddTag: (tag: Tag) => void;
   availableTags: Tag[];
 } & Partial<NoteData>; // optional field if editing is used
 
 export function NoteForm({
   onSubmit,
-  onAddTag,
   availableTags,
   title = "",
   markdown = "",
   tags = [],
 }: NoteFormProps) {
-  // current data of the note title
   const titleRef = useRef<HTMLInputElement>(null);
-  // current data of the description of the note
-  //!const markdownRef = useRef<HTMLTextAreaElement>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
   const [valueTextarea, setValueTextarea] = useState<string>(markdown);
   const [tagsTask, setTagsTask] = useState<string | undefined>("#");
+  const [createTagApi, {}] = notesAPI.useCreateTagsMutation();
   const navigate = useNavigate();
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     onSubmit({
       title: titleRef.current!.value,
-      // markdown: markdownRef.current!.value + " ",
       markdown: valueTextarea,
       tags: selectedTags,
     });
-    navigate(".."); //navigate to '/'
+    navigate("..");
   }
 
   const ChangeValueArea = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -56,7 +43,6 @@ export function NoteForm({
     setTagsTask(parse);
   };
 
-  // !for light text task*(I couldn't make it edited in the textarea)
   const light = useCallback(
     (editText: string | undefined) => {
       return <TextAreaLight editText={editText} tagsTask={tagsTask} />;
@@ -70,7 +56,6 @@ export function NoteForm({
         {/* //!name note */}
         <div className={styles.noteForm__input_title}>
           <label>Title</label>
-
           <input
             ref={titleRef}
             required
@@ -82,26 +67,21 @@ export function NoteForm({
         {/* //!tags */}
         <div>
           <label>Tags</label>
-          {/*//?library for creating and selecting selector elements  */}
           <CreatableReactSelect
-            required //required field
+            required
             className={styles.noteForm__multiSelectot}
             onCreateOption={(label) => {
               const newTag = { id: uuidV4(), label };
-              // @ts-ignore
-              onAddTag(newTag); // post api
-              // @ts-ignore
+              createTagApi(newTag);
+              //  @ts-ignore
               setSelectedTags((prev) => [...prev, newTag]);
             }}
-            // only those that were created when editing or creating a note
             value={selectedTags.map((tag) => {
               return { label: tag.label, value: tag.id };
             })}
-            // all available tags
             options={availableTags.map((tag) => {
               return { label: tag.label, value: tag.id };
             })}
-            // instant creation, deletion
             onChange={(tags) => {
               setSelectedTags(
                 // @ts-ignore
@@ -110,33 +90,26 @@ export function NoteForm({
                 })
               );
             }}
-            isMulti //multiple choice version
+            isMulti
           />
         </div>
       </div>
-      <label>Body</label>
 
+      <label>Body</label>
       <p>{light(tagsTask)}</p>
       {/* //!description note */}
-
       <textarea
         required
-        // defaultValue={markdown}
+        defaultValue={markdown}
         className={styles.noteForm__textarea}
         rows={5}
         value={valueTextarea}
         onChange={ChangeValueArea}
-      ></textarea>
-      {/*//! light text task */}
-      <p style={{ color: "red" }} className={styles.neteForm__textarea_p}>
-        {light(valueTextarea)}
-      </p>
-
+      />
       <div className={styles.noteForm__button_group}>
         <button type="submit" className="button primary">
           Save
         </button>
-
         <Link to="..">
           <button type="button" className="button default">
             Cancel

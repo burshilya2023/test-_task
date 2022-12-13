@@ -89,10 +89,10 @@
   padding: 7%;
   display: grid;
   gap: 10px;
-
+  overflow-y: scroll;
+  height: auto;
+  border: 11px solid red;
   &__tagWrapper{
     display: flex;
-
-  
   }
-  }
+}

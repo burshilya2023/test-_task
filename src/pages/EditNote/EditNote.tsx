@@ -4,20 +4,18 @@ import { NoteData, Tag } from "../../type";
 
 import styles from "./editNote.module.scss";
 type EditNoteProps = {
-  onSubmit: (id: string, data: NoteData) => void; //post API
-  onAddTag: (tag: Tag) => void; //the function is adding tags in the selector to be stored in localStorage and not locally in the component
-  availableTags: Tag[]; //the entire array of tags for the options selector
+  onSubmit: (id: string, data: NoteData) => void; //post/put API
+  availableTags: Tag[];
 };
 
-export function EditNote({ onSubmit, onAddTag, availableTags }: EditNoteProps) {
-  const note = useNote(); //current data
+export function EditNote({ onSubmit, availableTags }: EditNoteProps) {
+  const note = useNote(); //current data for note
   return (
     <>
       <h1 className={styles.editNote}>Edit Note</h1>
       <NoteForm
         title={note.title}
         markdown={note.markdown}
-        onAddTag={onAddTag}
         tags={note.tags}
         onSubmit={(data) => onSubmit(note.id, data)}
         availableTags={availableTags}

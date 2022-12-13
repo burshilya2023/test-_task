@@ -12,14 +12,9 @@ type NoteLayoutProps = {
 
 export function NoteLayout({ notes }: NoteLayoutProps) {
   const { id } = useParams();
-  // покажи только 1 заметку по id из парамс поэтому find а не filter
   const note = notes.find((n) => n.id === id);
-
-  // если нету заметок вернись на главную
   if (note == null) return <Navigate to="/" replace />;
-  // и передаем один объект из массива
 
-  // теперь в нашем контексте есть данные одного объекта актуальные для note:id
   return <Outlet context={note} />;
 }
 

@@ -1,0 +1,31 @@
+
+.editTag{
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin:5px;
+    border-radius:12px;
+    padding: 5px;
+    color: black;
+    border: 1px solid rgb(52, 52, 52);
+    &:hover{
+        background-color: rgb(199, 199, 199);
+    }
+    &__edit_delete{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        svg{
+            font-size: 25px;
+            padding: 5px;
+            cursor: pointer;
+        &:hover{
+            background-color: gray;
+            
+            color:white;
+            border-radius: 12px;
+        }
+        }
+    }
+}
